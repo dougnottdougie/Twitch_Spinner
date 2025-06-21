@@ -62,7 +62,10 @@ class SpinnerView(FloatLayout):
         super().__init__(**kwargs)
         self.stencil = StencilView(size_hint=(1, 1))
         self.add_widget(self.stencil)
-        self.reel = BoxLayout(orientation="vertical", size_hint=(1, None), spacing=dp(2))
+        # container that holds the scrolling labels
+        self.reel = BoxLayout(
+            orientation="vertical", size_hint=(1, None), spacing=dp(2)
+        )
         self.stencil.add_widget(self.reel)
         with self.canvas.after:
             Color(1, 1, 1, 0.2)
@@ -78,18 +81,34 @@ class SpinnerView(FloatLayout):
         temp.append(winner)
         self.reel.clear_widgets()
         for text in temp:
-            lbl = Label(text=text, size_hint_y=None, height=self.ITEM_HEIGHT)
+            lbl = Label(
+                text=text,
+                size_hint_y=None,
+                height=self.ITEM_HEIGHT,
+                halign="center",
+                valign="middle",
+            )
+            lbl.bind(size=lambda inst, val: setattr(inst, "text_size", inst.size))
             self.reel.add_widget(lbl)
-        self.reel.height = len(temp) * self.ITEM_HEIGHT
+
+        self.reel.height = len(temp) * self.ITEM_HEIGHT + (len(temp) - 1) * self.reel.spacing
         self.reel.y = self.height
-        final_offset = self.reel.height - (self.height / 2 + self.ITEM_HEIGHT / 2)
+        offset = (len(temp) - 1) * (self.ITEM_HEIGHT + self.reel.spacing)
+        final_y = self.height / 2 - self.ITEM_HEIGHT / 2 - offset
         Animation.cancel_all(self.reel)
-        anim = Animation(y=-final_offset, d=4, t="out_cubic")
+        anim = Animation(y=final_y, d=4, t="out_cubic")
         anim.start(self.reel)
 
     def show_text(self, text):
         self.reel.clear_widgets()
-        lbl = Label(text=text, size_hint_y=None, height=self.ITEM_HEIGHT)
+        lbl = Label(
+            text=text,
+            size_hint_y=None,
+            height=self.ITEM_HEIGHT,
+            halign="center",
+            valign="middle",
+        )
+        lbl.bind(size=lambda inst, val: setattr(inst, "text_size", inst.size))
         self.reel.add_widget(lbl)
         self.reel.height = self.ITEM_HEIGHT
         self.reel.y = self.height / 2 - self.ITEM_HEIGHT / 2
@@ -108,7 +127,14 @@ class HistoryPanel(BoxLayout):
     def refresh(self, history):
         self.container.clear_widgets()
         for item in history:
-            lbl = Label(text=item, size_hint_y=None, height=dp(30))
+            lbl = Label(
+                text=item,
+                size_hint_y=None,
+                height=dp(30),
+                halign="center",
+                valign="middle",
+            )
+            lbl.bind(size=lambda inst, val: setattr(inst, "text_size", inst.size))
             self.container.add_widget(lbl)
 
     def toggle(self):
