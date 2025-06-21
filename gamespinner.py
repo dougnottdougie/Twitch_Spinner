@@ -78,9 +78,19 @@ class SpinnerView(FloatLayout):
         temp.append(winner)
         self.reel.clear_widgets()
         for text in temp:
-            lbl = Label(text=text, size_hint_y=None, height=self.ITEM_HEIGHT)
+            lbl = Label(
+                text=text,
+                size_hint_y=None,
+                height=self.ITEM_HEIGHT,
+                halign="center",
+                valign="middle",
+            )
+            lbl.bind(size=lbl.setter("text_size"))
             self.reel.add_widget(lbl)
-        self.reel.height = len(temp) * self.ITEM_HEIGHT
+        self.reel.height = (
+            len(temp) * self.ITEM_HEIGHT
+            + (len(temp) - 1) * self.reel.spacing
+        )
         self.reel.y = self.height
         final_offset = self.reel.height - (self.height / 2 + self.ITEM_HEIGHT / 2)
         Animation.cancel_all(self.reel)
@@ -89,7 +99,14 @@ class SpinnerView(FloatLayout):
 
     def show_text(self, text):
         self.reel.clear_widgets()
-        lbl = Label(text=text, size_hint_y=None, height=self.ITEM_HEIGHT)
+        lbl = Label(
+            text=text,
+            size_hint_y=None,
+            height=self.ITEM_HEIGHT,
+            halign="center",
+            valign="middle",
+        )
+        lbl.bind(size=lbl.setter("text_size"))
         self.reel.add_widget(lbl)
         self.reel.height = self.ITEM_HEIGHT
         self.reel.y = self.height / 2 - self.ITEM_HEIGHT / 2
